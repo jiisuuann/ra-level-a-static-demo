@@ -1,0 +1,17 @@
+/dist/
+/node_modules/
+.DS_Store
+__pycache__/
+*.py[cod]
+.env*
+/data/
+/private/
+*.csv
+*.tsv
+*.parquet
+*.jsonl
+*.sqlite*
+*.pem
+*.key
+*.log
+coverage/

@@ -1,0 +1,57 @@
+name: Verify synthetic demo (deployment disabled)
+# Code-only publication: both upload and deployment are hard-disabled.
+# Enable them only after separate deployment approval.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: synthetic-pages-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Syntax and functionality
+        run: |
+          node --check site/app.js
+          node --check site/synthetic-data.js
+          node tests/test.cjs
+      - name: Build allowlisted synthetic artifact
+        run: node scripts/build.cjs
+      - name: Test static HTTP hosting and project subpath
+        run: node tests/http.cjs
+      - name: Audit final publication files
+        run: node scripts/audit.cjs dist
+      - name: Upload only audited dist
+        if: ${{ false && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    if: ${{ false && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Deploy synthetic artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
