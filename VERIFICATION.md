@@ -1,6 +1,6 @@
 # Synthetic demo verification
 
-Date: **2026-11-05**, America/Chicago. Local verification and public source-publication preflight. Public code publication is separately authorized; Pages configuration, artifact upload and website deployment are not. Both workflow publishing gates are hard-disabled.
+Date: **2026-11-05**, America/Chicago. Local verification for approved synthetic-only GitHub Pages activation. The earlier code-only gates have been replaced by main/non-PR restrictions. The original application, records and confidential aggregates are outside this deployment.
 
 ## Provenance and separation
 
@@ -43,10 +43,10 @@ The HTTP test binds a temporary loopback port and closes it at completion; it ma
 | Build output | **PASS** | Four files only, approximately 22 KiB total, hashes below. Build copies an explicit list and audits source/output; an unexpected prior artifact fails instead of being silently published/deleted. |
 | Actual local HTTP / Pages project prefix | **PASS** | `tests/http.cjs` serves audited dist at `/ra-level-a-static-demo/` on an ephemeral loopback port. Page and all relative links return expected bytes; unapproved private/test/API routes return 404. This checks static HTTP paths, not browser rendering. |
 | Standalone/no-private-data execution | **PASS** | Demo sources, tests and workflow copied to an isolated temporary directory with no private app/CSV/parent checkout. Functionality tests, build and audit passed there. Helpers do not import or traverse a private project. |
-| Workflow structure | **PASS — local/static** | Workflow YAML parsed with Ruby's standard YAML support; build/deploy jobs and dist-only upload verified. Node tests verify hard-disabled upload and deployment conditions plus prepared main/non-PR gating, dependent deployment, absence of custom secrets/private checkouts. No remote Actions execution has occurred. |
+| Workflow structure | **PASS — local/static** | Workflow YAML parsed with Ruby's standard YAML support; build/deploy jobs and dist-only upload verified. Node tests assert both enabled main/non-PR gates, dependent deployment, dist-only publication and absence of custom secrets/private checkouts. The initial verification-only workflow passed remotely; the activated publishing run is inspected after pushing this change. |
 | Original project preservation | **PASS** | Original application, HTML/CSS, private-data integrity hash, docs and ignore rules retain their baseline hashes. Parent Git working tree remains clean, and the demo directory remains ignored. No parent Git configuration, history or tracked content is changed by the standalone source publication. |
 | Real-browser UI/layout/mobile/touch | **NOT TESTED** | `cua.listBrowsers()` returned `[]`. DOM callback tests do not prove real mouse/keyboard behavior or CSS layout. |
-| Actual GitHub Actions / Pages publishing / redeployment | **NOT TESTED** | No remote repository or deployment operation performed. Workflow is prepared for a later approved repository only. |
+| Activated GitHub Pages run | **NOT TESTED at local pre-commit verification** | The initial verification-only workflow passed. Inspect the new commit's Actions run and live site after pushing; that result is separate from the local test report. |
 
 No unresolved local automated test failures remain. One local file-writing command initially used the wrong relative directory and failed before creating test/build files; it was corrected and the successfully created files were tested. No private application files were affected.
 
@@ -66,9 +66,9 @@ Only these four generated files are uploaded by the future workflow. Source docs
 - Fictional data and trends demonstrate interactions only. No actual housing inventory, recorded-market coverage or appreciation claim can be inferred.
 - Small-screen CSS includes stacked cards, wrapping controls and scrollable tables, but browser readability, label overlap, keyboard focus, native date inputs, touch scrolling and accessibility remain unverified.
 - The entire synthetic sample is deliberately public/browser-readable. This design must not be connected to confidential inputs. The audit enforces the known formula/catalog, schema and allowlist; future source edits still need review, and scanners do not guarantee confidentiality for arbitrary code.
-- The prepared GitHub workflow uses major-version action references. It follows GitHub's supported Pages build/upload/deploy structure but requires remote execution verification after approval. No custom secrets are required; the scoped built-in token and Pages OIDC permissions are enough.
-- The public source repository is approved as `jiisuuann/ra-level-a-static-demo`. A later, separate deployment approval is required before removing the false workflow gates; then Pages must be enabled with Source: GitHub Actions. Do not enable Pages in the original private-data repository.
-- No push or manual run can currently upload/deploy: both gates contain a literal false condition. All authorized pushes run verification only. After separate approval, activation must retain main/non-PR restrictions. Restrict the `github-pages` environment to main. Failing tests/audit prevent a new upload/deployment; the last successfully deployed version would remain live.
+- The prepared GitHub workflow uses major-version action references. It follows GitHub's supported Pages build/upload/deploy structure but requires verification of the activation commit's publishing run. No custom secrets are required; the scoped built-in token and Pages OIDC permissions are enough.
+- The public source repository is approved as `jiisuuann/ra-level-a-static-demo`. Synthetic-only deployment is now approved and the publishing gates are enabled for main/non-PR runs; Pages must use Source: GitHub Actions. Do not enable Pages in the original private-data repository.
+- Both upload and deployment require main/non-PR events. A failure in tests, build, HTTP checks or audit prevents publication. Restrict the `github-pages` environment to main. Failing tests/audit prevent a new upload/deployment; the last successfully deployed version would remain live.
 - Automatic redeployment is prepared, not demonstrated yet. After a later approved initial deployment, change one synthetic-only explanatory phrase, commit/push to demo main, and verify the workflow plus updated live copy. Do not modify real-data source files as a redeployment demonstration.
 
 ## Human verification before publishing
@@ -78,8 +78,8 @@ Only these four generated files are uploaded by the future workflow. Source docs
 3. Test dates/types, reset, a no-results date, reversed/blank dates, zoom/pan/Fit view and Enter/Space marker selection.
 4. At widths 320/375/768/1280px, check filters, city controls, table scrolling, cards, trends, map/key overlap and visible focus. Review with a screen reader if required.
 5. In DevTools Network, expect only same-origin static HTML/CSS/JS; no API/private-data/tile/analytics requests. Check the four dist files and rerun the audit before any upload.
-6. After separate publishing approval, verify the Pages project URL and the same interaction/network checks. Make an approved tiny demo-copy commit and confirm automatic redeployment. These remote checks are currently NOT TESTED.
+6. After the activation workflow completes, verify the Pages project URL and the same interaction/network checks. Make an approved tiny demo-copy commit and confirm automatic redeployment. These remote checks are currently NOT TESTED.
 
-## Code-only publication safeguard
+## Publishing activation safeguard
 
-The reviewed source inventory remains 12 files. To honor the instruction not to deploy during the initial public code push, `.github/workflows/deploy.yml` explicitly disables both upload-pages-artifact and the entire deploy job. The Node test asserts both false gates exist. This prevents configuring Pages or uploading a deployable artifact as a side effect of the first push. Future activation requires an explicitly approved workflow/test change. No site asset or synthetic data formula changed for this safeguard.
+The reviewed source inventory remains 12 files. The initial public code push intentionally skipped publication. Publishing is now separately approved: both workflow gates require a non-PR run on main, deployment depends on the successful build, and only the four audited dist files can be uploaded. Tests assert these constraints. No site asset or synthetic data formula changed for activation. No original data is read by the build, workflow or runtime site.
